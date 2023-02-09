@@ -25,23 +25,35 @@ const player = (sign) => {
     return {sign};
 };
 
-const displayControl = (()=>{
+const gameController = (()=>{
     // 
     let _round = 1;
     let _player1 = player("X");
     let _player2 = player("O");
 
+    const getCurrentPlayerSign = function(){
+        return _round % 2 === 0 ? _player2.sign : _player1.sign;
+    };
+
+    const playRound = function(index){
+        gameBoard.setIndex(index,getCurrentPlayerSign());
+        displayControl.displayBoard();
+        _round++;
+    };
+
+    return {getCurrentPlayerSign,playRound};
+})();
+
+const displayControl = (()=>{
+
     const gameCards = document.querySelectorAll(".game-card");
 
     gameCards.forEach((card)=>{
         card.addEventListener("click",()=>{
-
             const index = card.dataset.index;
-            let symbol = _round % 2 === 0 ? _player2.sign : _player1.sign;
-            gameBoard.setIndex(index,symbol);
-            displayBoard();
-            _round++;
-
+            if (gameBoard.getIndex(index) == undefined){
+                gameController.playRound(index);
+            } 
         });
     });
 
@@ -52,14 +64,11 @@ const displayControl = (()=>{
         });
     };
 
-
-
     // const resetBtn = document.querySelector(".reset-btn");
     // resetBtn.addEventListener("click",()=>{
     //     gameBoard.reset();
     //     displayBoard();
     // });
-
 
     return{displayBoard};
 })();
