@@ -38,10 +38,33 @@ const gameController = (()=>{
     const playRound = function(index){
         gameBoard.setIndex(index,getCurrentPlayerSign());
         displayControl.displayBoard();
+        checkGameStatus(index);
         _round++;
     };
 
-    return {getCurrentPlayerSign,playRound};
+    const checkGameStatus = function(index){
+        const _winConditions =[
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],
+            [0,4,8],
+            [2,4,6]];
+
+        let possibleChecks = _winConditions.filter((x)=>{return x.includes(Number(index))});
+
+        for (let i = 0; i < possibleChecks.length; i++) {
+            const element = possibleChecks[i];
+    
+            if(element.every((elem)=>{return gameBoard.getIndex(elem)===getCurrentPlayerSign()})){
+                console.log(`${getCurrentPlayerSign()} Won`)
+            }
+        }
+    };
+
+    return {getCurrentPlayerSign,playRound,checkGameStatus};
 })();
 
 const displayControl = (()=>{
