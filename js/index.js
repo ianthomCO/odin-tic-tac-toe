@@ -7,7 +7,7 @@ const gameBoard = (()=>{
     // Reset board to blank
     const reset = () => {
         for (let i = 0; i < _board.length; i++) {
-            _board[i] = "";
+            _board[i] = undefined;
         }
     }
 
@@ -32,8 +32,10 @@ const player = (sign) => {
 const gameController = (()=>{
     // Initialize the round and player symbols
     let _round = 1;
+    let _gameOver = false;
     let _player1 = player("X");
     let _player2 = player("O");
+    
 
     // Get the sign of the current player
     const getCurrentPlayerSign = function(){
@@ -44,12 +46,16 @@ const gameController = (()=>{
     const playRound = function(index){
         gameBoard.setIndex(index,getCurrentPlayerSign());
         displayControl.displayBoard();
-        checkGameStatus(index);
-        _round++;
+        checkWin(index);
+        checkDraw(index);
+        if (_gameOver === false) {
+            _round++;
+            displayControl.updateStatus(`${getCurrentPlayerSign()}'s turn`)
+        }
     };
 
     // Check if the game is over
-    const checkGameStatus = function(index){
+    const checkWin = function(index){
         const _winConditions =[
             [0,1,2],
             [3,4,5],
@@ -66,27 +72,64 @@ const gameController = (()=>{
             const element = possibleChecks[i];
     
             if(element.every((elem)=>{return gameBoard.getIndex(elem)===getCurrentPlayerSign()})){
-                console.log(`${getCurrentPlayerSign()} Won`)
-            }
+                displayControl.updateStatus(`${getCurrentPlayerSign()} Won!`)
+                _gameOver = true;
+                return true;
+            } 
         }
+        return false;
     };
 
-    return {getCurrentPlayerSign,playRound,checkGameStatus};
+    // Check if the game is a draw
+    const checkDraw = function(index){
+        if (_gameOver) {
+            return false;
+        } else if (_round === 9 ){
+            displayControl.updateStatus("Draw!")
+            _gameOver = true;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Check game status
+    const checkGameStatus = function(){
+        return _gameOver;
+    }
+
+    // Reset Game
+    const resetGame = function(){
+        _round = 1;
+        _gameOver = false;
+        gameBoard.reset();
+        displayControl.displayBoard();
+        displayControl.updateStatus(`${getCurrentPlayerSign()}'s turn`);
+    }
+
+
+    return {getCurrentPlayerSign,playRound,checkWin,checkDraw,checkGameStatus,resetGame};
 })();
 
 const displayControl = (()=>{
 
     const gameCards = document.querySelectorAll(".game-card");
+    const status = document.querySelector(".status");
 
     // Add listener to each game cell for when it is clicked
     gameCards.forEach((card)=>{
         card.addEventListener("click",()=>{
             const index = card.dataset.index;
-            if (gameBoard.getIndex(index) == undefined){
-                gameController.playRound(index);
-            } 
+            if (gameController.checkGameStatus() || gameBoard.getIndex(index) != undefined){
+                return;
+            }
+            gameController.playRound(index);
         });
     });
+
+    const updateStatus = function(string){
+        status.textContent = string;
+    }
 
     // Function to display the game board
     const displayBoard = function() {
@@ -96,12 +139,11 @@ const displayControl = (()=>{
         });
     };
 
-    // const resetBtn = document.querySelector(".reset-btn");
-    // resetBtn.addEventListener("click",()=>{
-    //     gameBoard.reset();
-    //     displayBoard();
-    // });
+    const resetBtn = document.querySelector(".reset-btn");
+    resetBtn.addEventListener("click",()=>{
+        gameController.resetGame();
+    });
 
-    return{displayBoard};
+    return{displayBoard,updateStatus};
 })();
 
