@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Odin Project Tic-Tac-Tow</title>
+    <title>Odin Project Tic-Tac-Toe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
     <script src="./js/index.js" defer></script>
 </head>
 <body>
-    <header>Header</header>
     <main>
         <div class="container">
-            <div class="status">X's turn</div>
+            <div class="status"><h2>X's turn</h2></div>
             <div id="gameboard">
                 <div class="game-card" data-index = "0"></div>
                 <div class="game-card" data-index = "1"></div>
@@ -24,8 +26,8 @@
                 <div class="game-card" data-index = "7"></div>
                 <div class="game-card" data-index = "8"></div>
             </div>
+            <button class="reset-btn">Reset</button>
         </div>
-        <button class="reset-btn">Reset</button>
     </main>
 </body>
 </html>

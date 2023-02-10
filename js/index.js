@@ -72,7 +72,8 @@ const gameController = (()=>{
             const element = possibleChecks[i];
     
             if(element.every((elem)=>{return gameBoard.getIndex(elem)===getCurrentPlayerSign()})){
-                displayControl.updateStatus(`${getCurrentPlayerSign()} Won!`)
+                displayControl.updateStatus(`${getCurrentPlayerSign()} WON!`)
+                displayControl.displayWin(element);
                 _gameOver = true;
                 return true;
             } 
@@ -103,6 +104,7 @@ const gameController = (()=>{
         _round = 1;
         _gameOver = false;
         gameBoard.reset();
+        displayControl.displayReset();
         displayControl.displayBoard();
         displayControl.updateStatus(`${getCurrentPlayerSign()}'s turn`);
     }
@@ -114,7 +116,7 @@ const gameController = (()=>{
 const displayControl = (()=>{
 
     const gameCards = document.querySelectorAll(".game-card");
-    const status = document.querySelector(".status");
+    const status = document.querySelector(".status h2");
 
     // Add listener to each game cell for when it is clicked
     gameCards.forEach((card)=>{
@@ -144,6 +146,21 @@ const displayControl = (()=>{
         gameController.resetGame();
     });
 
-    return{displayBoard,updateStatus};
+    // Display Winners
+    const displayWin = function(cells){
+        cells.forEach((index)=>{
+            const card = document.querySelector(`.game-card[data-index="${index}"]`);
+            card.classList.add("winner");
+        })
+    }
+
+    // Remove formats
+    const displayReset = function(){
+        gameCards.forEach((card)=>{
+            card.classList.remove("winner");
+        })
+    }
+
+    return{displayBoard,updateStatus,displayWin,displayReset};
 })();
 
